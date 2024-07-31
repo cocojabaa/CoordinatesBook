@@ -15,11 +15,13 @@ import com.example.coordinatebook.domain.models.WorldInfo
 import com.google.android.material.textfield.TextInputEditText
 
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), WorldClickListener {
     val binding: ActivityMainBinding by lazy { ActivityMainBinding.inflate(layoutInflater) }
     val worldsDatabaseApi: WorldsDatabaseApi by lazy { WorldsDatabaseApiImpl(this) }
 
     lateinit var worldsAdapter: WorldsRecyclerAdapter
+
+
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -30,15 +32,23 @@ class MainActivity : AppCompatActivity() {
         binding.createWorldButton.setOnClickListener {
             showCreateWorldDialog()
         }
+
     }
 
     private fun initWorldsRecycler() {
         Thread {
             val worlds = worldsDatabaseApi.getAllWorlds()
-            worldsAdapter = WorldsRecyclerAdapter(worlds)
+            worldsAdapter = WorldsRecyclerAdapter(worlds, this)
             binding.recyclerView.adapter = worldsAdapter
             binding.recyclerView.layoutManager = LinearLayoutManager(this)
         }.start()
+    }
+
+    override fun onWorldClick(worldInfo: WorldInfo) {
+        Thread {
+            worldsDatabaseApi.deleteWorld(worldInfo)
+        }.start()
+//        worldsAdapter.deleteWorld(worldInfo)
     }
 
     fun showCreateWorldDialog() {
@@ -57,12 +67,11 @@ class MainActivity : AppCompatActivity() {
                 description = description.text.toString()
             )
             Thread{
-                val response = worldsDatabaseApi.addWorld(worldInfo)
+                worldsDatabaseApi.addWorld(worldInfo)
             }.start()
             worldsAdapter.addWorld(worldInfo)
             dialog.dismiss()
         }
-
         dialog.show()
     }
 }
