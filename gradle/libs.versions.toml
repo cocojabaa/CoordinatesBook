@@ -12,10 +12,12 @@ constraintlayout = "2.1.4"
 
 room = "2.4.3"
 ksp = "1.9.10-1.0.13"
+lifecycle = "2.5.1"
 
 [libraries]
 androidx-room-ktx = {group="androidx.room", name="room-ktx", version.ref="room" }
 androidx-room-compiler = {group="androidx.room", name="room-compiler", version.ref="room" }
+androidx-lifecycle-livedata-ktx = {group="androidx.lifecycle", name="lifecycle-livedata-ktx", version.ref = "lifecycle"}
 
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
