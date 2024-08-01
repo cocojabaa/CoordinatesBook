@@ -4,7 +4,7 @@ import com.example.coordinatebook.domain.WorldsDatabaseApi
 import com.example.coordinatebook.domain.models.WorldInfo
 
 class DeleteWorldUseCase {
-    suspend fun execute(worldInfo: WorldInfo, databaseApi: WorldsDatabaseApi): Boolean {
-        return databaseApi.deleteWorld(worldInfo)
+    suspend fun execute(worldName: String, databaseApi: WorldsDatabaseApi): Boolean {
+        return databaseApi.deleteWorld(worldName)
     }
 }

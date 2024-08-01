@@ -20,10 +20,9 @@ class WorldsDatabaseApiImpl(val context: Context): WorldsDatabaseApi {
         return worlds
     }
 
-    override suspend fun deleteWorld(worldInfo: WorldInfo): Boolean {
+    override suspend fun deleteWorld(worldName: String): Boolean {
         try {
-            val entity = WorldEntity(worldInfo.id, worldInfo.name, worldInfo.description)
-            db.getDao().deleteWorld(entity)
+            db.getDao().deleteWorld(worldName)
             return true
         } catch (ex: Exception) {
             Log.e("My", "DELETE WORLD ERROR: ${ex.message}")

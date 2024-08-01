@@ -5,6 +5,7 @@ import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.widget.Button
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -61,13 +62,14 @@ class MainActivity : AppCompatActivity(), WorldClickListener {
     }
 
     override fun onWorldLongClick(worldInfo: WorldInfo) {
-        CoroutineScope(Dispatchers.IO).launch {
-            val result = async {deleteWorldUseCase.execute(worldInfo, worldsDatabaseApi)}.await()
-            runOnUiThread {
-                if (result) worldsAdapter.deleteWorld(worldInfo)
-                else Toast.makeText(this@MainActivity, "Мир не удалился", Toast.LENGTH_SHORT).show()
-            }
-        }
+//        CoroutineScope(Dispatchers.IO).launch {
+//            val result = async {deleteWorldUseCase.execute(worldInfo.name, worldsDatabaseApi)}.await()
+//            runOnUiThread {
+//                if (result) worldsAdapter.deleteWorld(worldInfo)
+//                else Toast.makeText(this@MainActivity, "Мир не удалился", Toast.LENGTH_SHORT).show()
+//            }
+//        }
+        showDeleteWorldDialog(worldInfo)
     }
 
     fun showCreateWorldDialog() {
@@ -97,6 +99,30 @@ class MainActivity : AppCompatActivity(), WorldClickListener {
                         Toast.makeText(this@MainActivity, "ОК", Toast.LENGTH_SHORT).show()
                         dialog.dismiss()
                     } else Toast.makeText(this@MainActivity, "Мир не записался", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+        dialog.show()
+    }
+
+    fun showDeleteWorldDialog(worldInfo: WorldInfo) {
+        val dialogBinding = layoutInflater.inflate(R.layout.delete_world_dialog, null)
+        val dialog = Dialog(this)
+        dialog.setContentView(dialogBinding)
+        dialog.setCancelable(true)
+        dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+
+        val worldNameText = dialog.findViewById<TextView>(R.id.worldNameText)
+        worldNameText.text = worldInfo.name
+
+        val deleteButton = dialog.findViewById<Button>(R.id.deleteWorldButton)
+        deleteButton.setOnClickListener {
+            CoroutineScope(Dispatchers.IO).launch {
+                val result = async {deleteWorldUseCase.execute(worldInfo.name, worldsDatabaseApi)}.await()
+                runOnUiThread {
+                    if (result) worldsAdapter.deleteWorld(worldInfo)
+                    else Toast.makeText(this@MainActivity, "Мир не удалился", Toast.LENGTH_SHORT).show()
+                    dialog.dismiss()
                 }
             }
         }
