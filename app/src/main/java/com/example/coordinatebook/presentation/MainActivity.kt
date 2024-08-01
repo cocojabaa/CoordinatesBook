@@ -57,6 +57,10 @@ class MainActivity : AppCompatActivity(), WorldClickListener {
     }
 
     override fun onWorldClick(worldInfo: WorldInfo) {
+        // TODO
+    }
+
+    override fun onWorldLongClick(worldInfo: WorldInfo) {
         CoroutineScope(Dispatchers.IO).launch {
             val result = async {deleteWorldUseCase.execute(worldInfo, worldsDatabaseApi)}.await()
             runOnUiThread {
@@ -90,6 +94,7 @@ class MainActivity : AppCompatActivity(), WorldClickListener {
                 runOnUiThread {
                     if (result) {
                         worldsAdapter.addWorld(worldInfo)
+                        Toast.makeText(this@MainActivity, "ОК", Toast.LENGTH_SHORT).show()
                         dialog.dismiss()
                     } else Toast.makeText(this@MainActivity, "Мир не записался", Toast.LENGTH_SHORT).show()
                 }

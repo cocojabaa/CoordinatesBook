@@ -17,7 +17,7 @@ class WorldsRecyclerAdapter(val worlds: MutableList<WorldInfo>, val listener: Wo
             binding.name.text = worldInfo.name
             binding.description.text = worldInfo.description
             binding.card.setOnLongClickListener {
-                listener.onWorldClick(worldInfo)
+                listener.onWorldLongClick(worldInfo)
                 true
             }
         }
