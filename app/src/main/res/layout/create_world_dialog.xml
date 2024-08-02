@@ -33,8 +33,8 @@
                 app:boxCornerRadiusBottomStart="10dp"
                 app:boxCornerRadiusTopEnd="10dp"
                 app:boxCornerRadiusTopStart="10dp"
-                app:boxStrokeColor="@color/primary"
-                app:hintTextColor="@color/primary">
+                app:boxStrokeColor="@color/dark_primary"
+                app:hintTextColor="@color/dark_primary">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/inputWorldName"
@@ -53,8 +53,8 @@
                 app:boxCornerRadiusBottomStart="10dp"
                 app:boxCornerRadiusTopEnd="10dp"
                 app:boxCornerRadiusTopStart="10dp"
-                app:boxStrokeColor="@color/primary"
-                app:hintTextColor="@color/primary">
+                app:boxStrokeColor="@color/dark_primary"
+                app:hintTextColor="@color/dark_primary">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/inputWorldDescription"
@@ -66,7 +66,7 @@
             <Button
                 android:id="@+id/doneButton"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="55dp"
                 android:layout_marginBottom="20dp"
                 android:text="Создать"
                 android:textSize="18sp" />

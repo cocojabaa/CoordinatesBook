@@ -1,4 +1,4 @@
-package com.example.coordinatebook.data
+package com.example.coordinatebook.data.worlds
 
 import android.content.Context
 import androidx.room.Database

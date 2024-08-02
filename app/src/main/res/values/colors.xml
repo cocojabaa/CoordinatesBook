@@ -2,6 +2,8 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
-    <color name="primary">#2de02a</color>
-    <color name="button_ripple">#282DE02A</color>
+    <color name="dark_primary">#588157</color>
+    <color name="light_primary">#a3b18a</color>
+    <color name="gray">#dad7cd</color>
+    <color name="button_ripple">#28a3b18a</color>
 </resources>

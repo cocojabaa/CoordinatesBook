@@ -11,13 +11,12 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.coordinatebook.R
-import com.example.coordinatebook.data.WorldsDatabaseApiImpl
+import com.example.coordinatebook.data.worlds.WorldsRepositoryImpl
 import com.example.coordinatebook.databinding.ActivityMainBinding
-import com.example.coordinatebook.databinding.ActivityWorldBinding
-import com.example.coordinatebook.domain.WorldsDatabaseApi
+import com.example.coordinatebook.domain.usecases.worlds.WorldsRepository
 import com.example.coordinatebook.domain.models.WorldInfo
-import com.example.coordinatebook.domain.usecases.AddWorldUseCase
-import com.example.coordinatebook.domain.usecases.DeleteWorldUseCase
+import com.example.coordinatebook.domain.usecases.worlds.AddWorldUseCase
+import com.example.coordinatebook.domain.usecases.worlds.DeleteWorldUseCase
 import com.google.android.material.textfield.TextInputEditText
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -27,7 +26,7 @@ import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity(), WorldClickListener {
     val binding: ActivityMainBinding by lazy { ActivityMainBinding.inflate(layoutInflater) }
-    val worldsDatabaseApi: WorldsDatabaseApi by lazy { WorldsDatabaseApiImpl(this) }
+    val worldsRepository: WorldsRepository by lazy { WorldsRepositoryImpl(this) }
 
     val addWorldUseCase: AddWorldUseCase by lazy { AddWorldUseCase() }
     val deleteWorldUseCase: DeleteWorldUseCase by lazy { DeleteWorldUseCase() }
@@ -48,7 +47,7 @@ class MainActivity : AppCompatActivity(), WorldClickListener {
 
     private fun initWorldsRecycler() {
         CoroutineScope(Dispatchers.IO).launch {
-            val worlds = async {worldsDatabaseApi.getAllWorlds()}.await()
+            val worlds = async {worldsRepository.getAllWorlds()}.await()
             runOnUiThread {
                 worldsAdapter = WorldsRecyclerAdapter(worlds, this@MainActivity)
                 binding.recyclerView.adapter = worldsAdapter
@@ -91,7 +90,7 @@ class MainActivity : AppCompatActivity(), WorldClickListener {
                 description = description.text.toString()
             )
             CoroutineScope(Dispatchers.IO).launch {
-                val result = async {addWorldUseCase.execute(worldInfo, worldsDatabaseApi)}.await()
+                val result = async {addWorldUseCase.execute(worldInfo, worldsRepository)}.await()
                 runOnUiThread {
                     if (result) {
                         worldsAdapter.addWorld(worldInfo)
@@ -116,7 +115,7 @@ class MainActivity : AppCompatActivity(), WorldClickListener {
         val deleteButton = dialog.findViewById<Button>(R.id.deleteWorldButton)
         deleteButton.setOnClickListener {
             CoroutineScope(Dispatchers.IO).launch {
-                val result = async {deleteWorldUseCase.execute(worldInfo.name, worldsDatabaseApi)}.await()
+                val result = async {deleteWorldUseCase.execute(worldInfo.name, worldsRepository)}.await()
                 runOnUiThread {
                     if (result) worldsAdapter.deleteWorld(worldInfo)
                     else Toast.makeText(this@MainActivity, "Мир не удалился(", Toast.LENGTH_SHORT).show()
