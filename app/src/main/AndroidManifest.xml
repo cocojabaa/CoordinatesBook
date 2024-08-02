@@ -13,6 +13,10 @@
         android:theme="@style/Theme.CoordinateBook"
         tools:targetApi="31">
         <activity
+            android:name=".presentation.WorldActivity"
+            android:exported="false"
+            android:theme="@style/Theme.CoordinateBook" />
+        <activity
             android:name=".presentation.MainActivity"
             android:exported="true">
             <intent-filter>

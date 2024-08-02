@@ -1,6 +1,7 @@
 package com.example.coordinatebook.presentation
 
 import android.app.Dialog
+import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
@@ -12,6 +13,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.coordinatebook.R
 import com.example.coordinatebook.data.WorldsDatabaseApiImpl
 import com.example.coordinatebook.databinding.ActivityMainBinding
+import com.example.coordinatebook.databinding.ActivityWorldBinding
 import com.example.coordinatebook.domain.WorldsDatabaseApi
 import com.example.coordinatebook.domain.models.WorldInfo
 import com.example.coordinatebook.domain.usecases.AddWorldUseCase
@@ -58,17 +60,14 @@ class MainActivity : AppCompatActivity(), WorldClickListener {
     }
 
     override fun onWorldClick(worldInfo: WorldInfo) {
-        // TODO
+        val intent = Intent(this, WorldActivity::class.java)
+        intent.putExtra("worldId", worldInfo.id)
+        intent.putExtra("worldName", worldInfo.name)
+        intent.putExtra("worldDescription", worldInfo.description)
+        startActivity(intent)
     }
 
     override fun onWorldLongClick(worldInfo: WorldInfo) {
-//        CoroutineScope(Dispatchers.IO).launch {
-//            val result = async {deleteWorldUseCase.execute(worldInfo.name, worldsDatabaseApi)}.await()
-//            runOnUiThread {
-//                if (result) worldsAdapter.deleteWorld(worldInfo)
-//                else Toast.makeText(this@MainActivity, "Мир не удалился", Toast.LENGTH_SHORT).show()
-//            }
-//        }
         showDeleteWorldDialog(worldInfo)
     }
 
@@ -96,9 +95,8 @@ class MainActivity : AppCompatActivity(), WorldClickListener {
                 runOnUiThread {
                     if (result) {
                         worldsAdapter.addWorld(worldInfo)
-                        Toast.makeText(this@MainActivity, "ОК", Toast.LENGTH_SHORT).show()
                         dialog.dismiss()
-                    } else Toast.makeText(this@MainActivity, "Мир не записался", Toast.LENGTH_SHORT).show()
+                    } else Toast.makeText(this@MainActivity, "Мир не записался(", Toast.LENGTH_SHORT).show()
                 }
             }
         }
@@ -121,7 +119,7 @@ class MainActivity : AppCompatActivity(), WorldClickListener {
                 val result = async {deleteWorldUseCase.execute(worldInfo.name, worldsDatabaseApi)}.await()
                 runOnUiThread {
                     if (result) worldsAdapter.deleteWorld(worldInfo)
-                    else Toast.makeText(this@MainActivity, "Мир не удалился", Toast.LENGTH_SHORT).show()
+                    else Toast.makeText(this@MainActivity, "Мир не удалился(", Toast.LENGTH_SHORT).show()
                     dialog.dismiss()
                 }
             }
