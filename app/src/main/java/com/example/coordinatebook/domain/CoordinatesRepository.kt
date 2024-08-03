@@ -1,4 +1,4 @@
-package com.example.coordinatebook.domain.usecases.coordinates
+package com.example.coordinatebook.domain
 
 import com.example.coordinatebook.domain.models.CoordinatesInfo
 

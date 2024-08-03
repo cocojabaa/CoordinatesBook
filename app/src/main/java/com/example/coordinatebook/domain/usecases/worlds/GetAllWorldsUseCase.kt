@@ -1,9 +1,10 @@
 package com.example.coordinatebook.domain.usecases.worlds
 
+import com.example.coordinatebook.domain.WorldsRepository
 import com.example.coordinatebook.domain.models.WorldInfo
 
-class GetAllWorldsUseCase {
-    suspend fun execute(databaseApi: WorldsRepository): List<WorldInfo> {
-        return databaseApi.getAllWorlds()
+class GetAllWorldsUseCase(val repository: WorldsRepository) {
+    suspend fun execute(): MutableList<WorldInfo> {
+        return repository.getAllWorlds()
     }
 }

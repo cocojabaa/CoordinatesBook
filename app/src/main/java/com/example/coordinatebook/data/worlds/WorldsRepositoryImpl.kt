@@ -2,7 +2,7 @@ package com.example.coordinatebook.data.worlds
 
 import android.content.Context
 import android.util.Log
-import com.example.coordinatebook.domain.usecases.worlds.WorldsRepository
+import com.example.coordinatebook.domain.WorldsRepository
 import com.example.coordinatebook.domain.models.WorldInfo
 
 class WorldsRepositoryImpl(val context: Context): WorldsRepository {

@@ -1,4 +1,4 @@
-package com.example.coordinatebook.domain.usecases.worlds
+package com.example.coordinatebook.domain
 
 import com.example.coordinatebook.domain.models.WorldInfo
 
