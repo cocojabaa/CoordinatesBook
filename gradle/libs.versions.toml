@@ -21,6 +21,7 @@ androidx-room-ktx = {group="androidx.room", name="room-ktx", version.ref="room" 
 androidx-room-compiler = {group="androidx.room", name="room-compiler", version.ref="room" }
 androidx-lifecycle-livedata-ktx = {group="androidx.lifecycle", name="lifecycle-livedata-ktx", version.ref = "lifecycle"}
 androidx-lifecycle-viewmodel-ktx = {group="androidx.lifecycle", name="lifecycle-viewmodel-ktx", version.ref = "lifecycle"}
+androidx-activity-ktx = { group="androidx.activity", name = "activity-ktx", version.ref = "activity" }
 
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }

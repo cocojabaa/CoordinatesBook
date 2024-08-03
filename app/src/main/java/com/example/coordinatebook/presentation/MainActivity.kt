@@ -8,6 +8,7 @@ import android.os.Bundle
 import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -36,14 +37,11 @@ class MainActivity : AppCompatActivity(), WorldClickListener {
 
     lateinit var worldsAdapter: WorldsRecyclerAdapter
 
-    lateinit var viewModel: MainViewModel
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
-
-        viewModel = ViewModelProvider(this, MainViewModelFactory(this)).get(MainViewModel::class.java)
 
         initWorldsRecycler()
 
@@ -55,7 +53,7 @@ class MainActivity : AppCompatActivity(), WorldClickListener {
 
     private fun initWorldsRecycler() {
         CoroutineScope(Dispatchers.IO).launch {
-            val worlds = async {viewModel.getWorldsList()}.await()
+            val worlds = async {getAllWorldsUseCase.execute()}.await()
             runOnUiThread {
                 worldsAdapter = WorldsRecyclerAdapter(worlds, this@MainActivity)
                 binding.recyclerView.adapter = worldsAdapter
