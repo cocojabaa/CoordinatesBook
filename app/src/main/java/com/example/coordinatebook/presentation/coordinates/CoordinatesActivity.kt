@@ -6,7 +6,8 @@ import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.util.Log
 import android.view.MenuItem
-import android.widget.ImageButton
+import android.widget.Button
+import android.widget.RadioButton
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.coordinatebook.R
@@ -14,9 +15,10 @@ import com.example.coordinatebook.data.coordinates.CoordinatesRepositoryImpl
 import com.example.coordinatebook.databinding.ActivityWorldBinding
 import com.example.coordinatebook.domain.CoordinatesRepository
 import com.example.coordinatebook.domain.models.CoordinatesInfo
+import com.example.coordinatebook.domain.models.Dimensions
 import com.example.coordinatebook.domain.usecases.coordinates.AddCoordinatesUseCase
-import com.example.coordinatebook.domain.usecases.coordinates.DeleteCoordinatesUseCase
 import com.example.coordinatebook.domain.usecases.coordinates.GetCoordinatesByIdUseCase
+import com.google.android.material.textfield.TextInputEditText
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -77,8 +79,59 @@ class CoordinatesActivity : AppCompatActivity(), CoordinatesClickListener {
         dialog.setCancelable(true)
         dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
 
-        dialog.show()
 
+        val addButton = dialogBinding.findViewById<Button>(R.id.addCoordinatesButton)
+        val inputXView = dialogBinding.findViewById<TextInputEditText>(R.id.inputX)
+        val inputYView = dialogBinding.findViewById<TextInputEditText>(R.id.inputY)
+        val inputZView = dialogBinding.findViewById<TextInputEditText>(R.id.inputZ)
+        val inputDescriptionView = dialogBinding.findViewById<TextInputEditText>(R.id.inputCoordinatesDescription)
+
+        val upperWorldRadio = dialogBinding.findViewById<RadioButton>(R.id.upperWorldRadio)
+        val netherRadio = dialogBinding.findViewById<RadioButton>(R.id.netherRadio)
+        val endRadio = dialogBinding.findViewById<RadioButton>(R.id.endRadio)
+
+
+        addButton.setOnClickListener {
+            val inputXText = inputXView.text.toString()
+            val inputYText = inputYView.text.toString()
+            val inputZText = inputZView.text.toString()
+            val inputDescriptionText = inputDescriptionView.text.toString()
+
+            if (inputXText.isEmpty()) {
+                inputXView.error = "Введите значение"
+                return@setOnClickListener
+            }
+            if (inputZText.isEmpty()) {
+                inputZView.error = "Введите значение"
+                return@setOnClickListener
+            }
+            CoroutineScope(Dispatchers.IO).launch {
+                lateinit var inputDimension: Dimensions
+                var yCoordinate: Int? = null
+
+                if (inputYText.length != 0) yCoordinate = inputYText.toInt()
+                if (upperWorldRadio.isActivated) inputDimension = Dimensions.UpperWorld
+                if (netherRadio.isActivated) inputDimension = Dimensions.Nether
+                if (endRadio.isActivated) inputDimension = Dimensions.End
+
+                val coordinatesInfo = CoordinatesInfo(
+                    worldId = worldId,
+                    description = inputDescriptionText,
+                    dimension = inputDimension,
+                    x = inputXText.toInt(),
+                    y = yCoordinate,
+                    z = inputZText.toInt()
+                )
+
+                val addCoordinatesSuccess = async { addCoordinatesUseCase.execute(coordinatesInfo) }.await()
+                if (addCoordinatesSuccess) runOnUiThread {
+                    adapter.addCoordinates(coordinatesInfo)
+                    dialog.dismiss()
+                }
+
+            }
+        }
+        dialog.show()
     }
 
 

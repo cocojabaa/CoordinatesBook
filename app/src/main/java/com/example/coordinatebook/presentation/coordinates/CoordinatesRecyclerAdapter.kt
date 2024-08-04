@@ -1,5 +1,6 @@
 package com.example.coordinatebook.presentation.coordinates
 
+import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,7 +10,7 @@ import com.example.coordinatebook.databinding.CoordinatesItemBinding
 import com.example.coordinatebook.domain.models.CoordinatesInfo
 
 class CoordinatesRecyclerAdapter(
-    val coordinatesList: MutableList<CoordinatesInfo>,
+    var coordinatesList: MutableList<CoordinatesInfo>,
     val listener: CoordinatesClickListener
 ): RecyclerView.Adapter<CoordinatesRecyclerAdapter.ViewHolder>() {
     class ViewHolder(view: View, val listener: CoordinatesClickListener): RecyclerView.ViewHolder(view) {
@@ -38,5 +39,17 @@ class CoordinatesRecyclerAdapter(
 
     override fun getItemCount(): Int {
         return coordinatesList.size
+    }
+
+    @SuppressLint("NotifyDataSetChanged")
+    fun addCoordinates(coordinatesInfo: CoordinatesInfo) {
+        coordinatesList.add(coordinatesInfo)
+        notifyDataSetChanged()
+    }
+
+    @SuppressLint("NotifyDataSetChanged")
+    fun deleteCoordinates(coordinatesInfo: CoordinatesInfo) {
+        coordinatesList.remove(coordinatesInfo)
+        notifyDataSetChanged()
     }
 }

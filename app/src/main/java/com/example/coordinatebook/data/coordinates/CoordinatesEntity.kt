@@ -23,7 +23,7 @@ data class CoordinatesEntity (
     val x: Int,
 
     @ColumnInfo(name="y")
-    val y: Int,
+    val y: Int?,
 
     @ColumnInfo(name="z")
     val z: Int,

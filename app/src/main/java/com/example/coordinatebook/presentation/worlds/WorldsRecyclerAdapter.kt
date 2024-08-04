@@ -14,8 +14,8 @@ class WorldsRecyclerAdapter(val worldsList: MutableList<WorldInfo>, val listener
     class WorldHolder(view: View, val listener: WorldClickListener): RecyclerView.ViewHolder(view) {
         var binding = WorldItemBinding.bind(view)
         fun bind(worldInfo: WorldInfo) {
-            binding.name.text = worldInfo.name
-            binding.description.text = worldInfo.description
+            binding.worldNameText.text = worldInfo.name
+            binding.worldDesctiprionText.text = worldInfo.description
             binding.card.setOnLongClickListener {
                 listener.onWorldLongClick(worldInfo)
                 true

@@ -2,11 +2,11 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "587e7add28221ab5ce212d7b9adb6aad",
+    "identityHash": "52a08e29d23a5c18f0bf7bba1b5d9fea",
     "entities": [
       {
         "tableName": "coordinates",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `worldId` INTEGER NOT NULL, `description` TEXT NOT NULL, `dimension` TEXT NOT NULL, `x` INTEGER NOT NULL, `y` INTEGER NOT NULL, `z` INTEGER NOT NULL)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `worldId` INTEGER NOT NULL, `description` TEXT NOT NULL, `dimension` TEXT NOT NULL, `x` INTEGER NOT NULL, `y` INTEGER, `z` INTEGER NOT NULL)",
         "fields": [
           {
             "fieldPath": "id",
@@ -42,7 +42,7 @@
             "fieldPath": "y",
             "columnName": "y",
             "affinity": "INTEGER",
-            "notNull": true
+            "notNull": false
           },
           {
             "fieldPath": "z",
@@ -64,7 +64,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '587e7add28221ab5ce212d7b9adb6aad')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '52a08e29d23a5c18f0bf7bba1b5d9fea')"
     ]
   }
 }

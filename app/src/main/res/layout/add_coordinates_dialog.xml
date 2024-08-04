@@ -49,7 +49,9 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:hint="X"
-                        android:inputType="number|numberDecimal|numberSigned" />
+                        android:imeOptions="actionNext"
+                        android:inputType="number|numberSigned"
+                        android:nextFocusRight="@id/inputY" />
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <com.google.android.material.textfield.TextInputLayout
@@ -70,7 +72,9 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:hint="Y"
-                        android:inputType="number|numberDecimal|numberSigned" />
+                        android:imeOptions="actionNext"
+                        android:inputType="number|numberSigned"
+                        android:nextFocusRight="@id/inputZ" />
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <com.google.android.material.textfield.TextInputLayout
@@ -90,7 +94,9 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:hint="Z"
-                        android:inputType="number|numberDecimal|numberSigned" />
+                        android:imeOptions="actionNext"
+                        android:inputType="number|numberSigned"
+                        android:nextFocusDown="@id/inputCoordinatesDescription" />
                 </com.google.android.material.textfield.TextInputLayout>
 
             </LinearLayout>
@@ -98,36 +104,32 @@
             <RadioGroup
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:orientation="horizontal"
                 android:paddingStart="10dp"
                 android:paddingEnd="10dp">
 
-                <LinearLayout
-                    android:id="@+id/dimensionLinearLayout"
-                    android:layout_width="match_parent"
+                <RadioButton
+                    android:id="@+id/upperWorldRadio"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal">
+                    android:layout_weight="1"
+                    android:checked="true"
+                    android:text="Верхний мир" />
 
-                    <RadioButton
-                        android:id="@+id/upperWorldRadio"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="Верхний мир" />
+                <RadioButton
+                    android:id="@+id/netherRadio"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Ад" />
 
-                    <RadioButton
-                        android:id="@+id/netherRadio"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="Ад" />
+                <RadioButton
+                    android:id="@+id/endRadio"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Энд" />
 
-                    <RadioButton
-                        android:id="@+id/endRadio"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="Энд" />
-                </LinearLayout>
             </RadioGroup>
 
             <com.google.android.material.textfield.TextInputLayout
@@ -153,7 +155,7 @@
             </com.google.android.material.textfield.TextInputLayout>
 
             <Button
-                android:id="@+id/button"
+                android:id="@+id/addCoordinatesButton"
                 android:layout_width="200dp"
                 android:layout_height="55dp"
                 android:layout_marginStart="10dp"
