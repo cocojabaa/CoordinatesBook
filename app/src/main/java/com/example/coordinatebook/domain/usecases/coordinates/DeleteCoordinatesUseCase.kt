@@ -1,5 +1,5 @@
 package com.example.coordinatebook.domain.usecases.coordinates
 
-class AddCoordinatesByIdUseCase {
+class DeleteCoordinatesUseCase {
     fun execute() {}
 }

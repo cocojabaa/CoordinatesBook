@@ -37,6 +37,10 @@ android {
     buildFeatures {
         viewBinding = true
     }
+    ksp {
+        arg("room.schemaLocation".toString(), "$projectDir/schemas")
+    }
+
 
 }
 

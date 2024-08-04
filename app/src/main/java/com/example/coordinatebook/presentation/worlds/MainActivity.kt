@@ -1,16 +1,15 @@
-package com.example.coordinatebook.presentation
+package com.example.coordinatebook.presentation.worlds
 
 import android.app.Dialog
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
+import android.util.Log
 import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
-import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.coordinatebook.R
 import com.example.coordinatebook.data.worlds.WorldsRepositoryImpl
@@ -20,6 +19,7 @@ import com.example.coordinatebook.domain.models.WorldInfo
 import com.example.coordinatebook.domain.usecases.worlds.AddWorldUseCase
 import com.example.coordinatebook.domain.usecases.worlds.DeleteWorldUseCase
 import com.example.coordinatebook.domain.usecases.worlds.GetAllWorldsUseCase
+import com.example.coordinatebook.presentation.coordinates.CoordinatesActivity
 import com.google.android.material.textfield.TextInputEditText
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -43,15 +43,15 @@ class MainActivity : AppCompatActivity(), WorldClickListener {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
 
-        initWorldsRecycler()
+        initRecyclerView()
 
-        binding.createWorldButton.setOnClickListener {
+        binding.showCreateWorldDialogButton.setOnClickListener {
             showCreateWorldDialog()
         }
 
     }
 
-    private fun initWorldsRecycler() {
+    private fun initRecyclerView() {
         CoroutineScope(Dispatchers.IO).launch {
             val worlds = async {getAllWorldsUseCase.execute()}.await()
             runOnUiThread {
@@ -68,7 +68,7 @@ class MainActivity : AppCompatActivity(), WorldClickListener {
         val intent = Intent(this, CoordinatesActivity::class.java)
         intent.putExtra("worldId", worldInfo.id)
         intent.putExtra("worldName", worldInfo.name)
-        intent.putExtra("worldDescription", worldInfo.description)
+        Log.i("My", "WORLD ID ON CLICK: ${worldInfo.id}")
         startActivity(intent)
     }
 
@@ -85,23 +85,34 @@ class MainActivity : AppCompatActivity(), WorldClickListener {
 
         val doneButton = dialogBinding.findViewById<Button>(R.id.doneButton)
         doneButton.setOnClickListener {
-            val name = dialogBinding.findViewById<TextInputEditText>(R.id.inputWorldName)
-            val description = dialogBinding.findViewById<TextInputEditText>(R.id.inputWorldDescription)
-            if (name.text.isNullOrEmpty()) {
-                name.error = "Введите название мира"
+            val nameView = dialogBinding.findViewById<TextInputEditText>(R.id.inputWorldName)
+            val descriptionView = dialogBinding.findViewById<TextInputEditText>(R.id.inputWorldDescription)
+            val nameText = nameView.text.toString()
+            val descriptionText = descriptionView.text.toString()
+
+            if (nameText.isEmpty()) {
+                nameView.error = "Введите название мира"
                 return@setOnClickListener
             }
-            val worldInfo = WorldInfo(
-                name = name.text.toString(),
-                description = description.text.toString()
-            )
             CoroutineScope(Dispatchers.IO).launch {
-                val result = async {addWorldUseCase.execute(worldInfo)}.await()
+                if (!isWorldUnique(nameText)) {
+                    runOnUiThread {
+                        nameView.error = "Мир с таким именем уже есть"
+                    }
+                    return@launch
+                }
+                var worldInfo = WorldInfo(
+                    name = nameText,
+                    description = descriptionText
+                )
+                val newWorldId = async { addWorldUseCase.execute(worldInfo) }.await()
                 runOnUiThread {
-                    if (result) {
+                    if (newWorldId != null) {
+                        worldInfo.id = newWorldId
                         worldsAdapter.addWorld(worldInfo)
+                        Log.i("My", "WORLD ID AFTER ADAPTER ${worldInfo.id}")
                         dialog.dismiss()
-                    } else Toast.makeText(this@MainActivity, "Мир не записался(", Toast.LENGTH_SHORT).show()
+                    } else Toast.makeText(this@MainActivity, "Мир не записался (worldId = null)", Toast.LENGTH_SHORT).show()
                 }
             }
         }
@@ -130,5 +141,13 @@ class MainActivity : AppCompatActivity(), WorldClickListener {
             }
         }
         dialog.show()
+    }
+
+    suspend fun isWorldUnique(worldName: String): Boolean {
+        val worldsList = getAllWorldsUseCase.execute()
+        worldsList.forEach {
+            if (it.name == worldName) return false
+        }
+        return true
     }
 }

@@ -29,14 +29,24 @@ class WorldsRepositoryImpl(val context: Context): WorldsRepository {
         }
     }
 
-    override suspend fun addWorld(worldInfo: WorldInfo): Boolean{
+    override suspend fun addWorld(worldInfo: WorldInfo): Int? {
         try {
             val entity = WorldEntity(worldInfo.id, worldInfo.name, worldInfo.description)
             db.getDao().addWorld(entity)
-            return true
+            return db.getDao().getWorldByName(worldInfo.name).id
         } catch (ex: Exception) {
             Log.e("My", "ADD WORLD ERROR: ${ex.message}")
-            return false
+            return null
+        }
+    }
+
+    override suspend fun getWorldIdByName(worldName: String): Int? {
+        try {
+            val worldEntity = db.getDao().getWorldByName(worldName)
+            return worldEntity.id
+        } catch (ex: Exception) {
+            Log.e("My", "GET WORLD ERROR: ${ex.message}")
+            return null
         }
     }
 }

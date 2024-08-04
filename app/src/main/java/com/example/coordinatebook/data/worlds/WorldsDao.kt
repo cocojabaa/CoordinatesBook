@@ -16,4 +16,7 @@ interface WorldsDao {
     @Query("DELETE FROM worlds WHERE Name = :name")
     suspend fun deleteWorld(name: String)
 
+    @Query("SELECT * FROM worlds WHERE name = :worldName")
+    suspend fun getWorldByName(worldName: String): WorldEntity
+
 }

@@ -10,9 +10,9 @@ data class WorldEntity (
     @PrimaryKey(autoGenerate = true)
     var id: Int? = null,
 
-    @ColumnInfo(name = "Name")
+    @ColumnInfo(name = "name")
     var name: String,
 
-    @ColumnInfo(name = "Description")
+    @ColumnInfo(name = "description")
     var description: String?,
 )

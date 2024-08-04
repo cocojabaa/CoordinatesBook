@@ -13,11 +13,11 @@
         android:theme="@style/Theme.CoordinateBook"
         tools:targetApi="31">
         <activity
-            android:name=".presentation.CoordinatesActivity"
+            android:name=".presentation.coordinates.CoordinatesActivity"
             android:exported="false"
             android:theme="@style/Theme.CoordinateBook" />
         <activity
-            android:name=".presentation.MainActivity"
+            android:name=".presentation.worlds.MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
