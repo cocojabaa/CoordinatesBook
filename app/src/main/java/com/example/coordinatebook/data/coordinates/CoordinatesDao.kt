@@ -16,6 +16,6 @@ interface CoordinatesDao {
     @Query("DELETE FROM coordinates WHERE worldId = :worldId")
     suspend fun deleteAllCoordinatesById(worldId: Int)
 
-    @Delete
-    suspend fun deleteCoordinates(coordinatesEntity: CoordinatesEntity)
+    @Query("DELETE FROM coordinates WHERE worldId = :worldId AND description = :description AND dimension = :dimension AND x = :x AND z = :z")
+    suspend fun deleteCoordinates(worldId: Int?, description: String, dimension: String, x: Int, z: Int)
 }

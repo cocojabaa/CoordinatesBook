@@ -50,16 +50,23 @@ class CoordinatesRepositoryImpl(context: Context): CoordinatesRepository {
 
     override suspend fun deleteCoordinates(coordinatesInfo: CoordinatesInfo): Boolean {
         try {
-            val coordinatesEntity = CoordinatesEntity(
-                worldId = coordinatesInfo.worldId,
-                description = coordinatesInfo.description,
-                dimension = coordinatesInfo.dimension.value,
-                x = coordinatesInfo.x,
-                y = coordinatesInfo.y,
-                z = coordinatesInfo.z,
+//            val coordinatesEntity = CoordinatesEntity(
+//                worldId = coordinatesInfo.worldId,
+//                description = coordinatesInfo.description,
+//                dimension = coordinatesInfo.dimension.value,
+//                x = coordinatesInfo.x,
+//                y = coordinatesInfo.y,
+//                z = coordinatesInfo.z,
+//            )
+            Log.i("My", "IN REPOS WORLDID=${coordinatesInfo.worldId} DESC=${coordinatesInfo.description} DIMEN=${coordinatesInfo.dimension} X=${coordinatesInfo.x} Y=${coordinatesInfo.y} Z=${coordinatesInfo.z}")
+            db.getCoordinatesDao().deleteCoordinates(
+                coordinatesInfo.worldId,
+                coordinatesInfo.description,
+                coordinatesInfo.dimension.value,
+                coordinatesInfo.x,
+//                coordinatesInfo.y,
+                coordinatesInfo.z
             )
-            Log.i("My", "IN REPOS WORLDID=${coordinatesEntity.worldId} Y=${coordinatesEntity.y} DIMEN=${coordinatesEntity.dimension}")
-            db.getCoordinatesDao().deleteCoordinates(coordinatesEntity)
             return true
         } catch(ex: Exception) {
             Log.e("My", "DELETE COORDINATES ERROR: ${ex.message}")
