@@ -1,6 +1,8 @@
 package com.example.coordinatebook.presentation.coordinates
 
 import android.annotation.SuppressLint
+import android.graphics.drawable.Drawable
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -8,6 +10,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.coordinatebook.R
 import com.example.coordinatebook.databinding.CoordinatesItemBinding
 import com.example.coordinatebook.domain.models.CoordinatesInfo
+import com.example.coordinatebook.domain.models.Dimensions
 
 class CoordinatesRecyclerAdapter(
     var coordinatesList: MutableList<CoordinatesInfo>,
@@ -17,9 +20,16 @@ class CoordinatesRecyclerAdapter(
         val binding = CoordinatesItemBinding.bind(view)
         fun bind(coordinatesInfo: CoordinatesInfo) {
             binding.xText.text = coordinatesInfo.x.toString()
-            binding.yText.text = coordinatesInfo.y.toString()
+            if (coordinatesInfo.y == null) binding.yText.text = ""
+            else binding.yText.text = coordinatesInfo.y.toString()
             binding.zText.text = coordinatesInfo.z.toString()
             binding.descriptionText.text = coordinatesInfo.description
+
+            when (coordinatesInfo.dimension) {
+                Dimensions.UpperWorld -> {binding.dimensionImage.setBackgroundResource(R.drawable.upper_world_sign) }
+                Dimensions.Nether -> {binding.dimensionImage.setBackgroundResource(R.drawable.nether_sign) }
+                Dimensions.End -> {binding.dimensionImage.setBackgroundResource(R.drawable.end_sign) }
+            }
 
             binding.card.setOnLongClickListener {
                 listener.onCoordinatesLongClick(coordinatesInfo)

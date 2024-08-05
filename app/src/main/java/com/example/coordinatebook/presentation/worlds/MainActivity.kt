@@ -12,10 +12,13 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.coordinatebook.R
+import com.example.coordinatebook.data.coordinates.CoordinatesRepositoryImpl
 import com.example.coordinatebook.data.worlds.WorldsRepositoryImpl
 import com.example.coordinatebook.databinding.ActivityMainBinding
+import com.example.coordinatebook.domain.CoordinatesRepository
 import com.example.coordinatebook.domain.WorldsRepository
 import com.example.coordinatebook.domain.models.WorldInfo
+import com.example.coordinatebook.domain.usecases.coordinates.DeleteAllCoordinatesByIdUseCase
 import com.example.coordinatebook.domain.usecases.worlds.AddWorldUseCase
 import com.example.coordinatebook.domain.usecases.worlds.DeleteWorldUseCase
 import com.example.coordinatebook.domain.usecases.worlds.GetAllWorldsUseCase
@@ -29,11 +32,15 @@ import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity(), WorldClickListener {
     val binding: ActivityMainBinding by lazy { ActivityMainBinding.inflate(layoutInflater) }
+
     val worldsRepository: WorldsRepository by lazy { WorldsRepositoryImpl(this) }
+    val coordinatesRepository: CoordinatesRepository by lazy { CoordinatesRepositoryImpl(this) }
 
     val getAllWorldsUseCase: GetAllWorldsUseCase by lazy { GetAllWorldsUseCase(worldsRepository) }
     val addWorldUseCase: AddWorldUseCase by lazy { AddWorldUseCase(worldsRepository) }
     val deleteWorldUseCase: DeleteWorldUseCase by lazy { DeleteWorldUseCase(worldsRepository) }
+
+    val deleteAllCoordinatesByIdUseCase: DeleteAllCoordinatesByIdUseCase by lazy { DeleteAllCoordinatesByIdUseCase(coordinatesRepository) }
 
     lateinit var worldsAdapter: WorldsRecyclerAdapter
 
@@ -132,6 +139,7 @@ class MainActivity : AppCompatActivity(), WorldClickListener {
         val deleteButton = dialog.findViewById<Button>(R.id.deleteWorldButton)
         deleteButton.setOnClickListener {
             CoroutineScope(Dispatchers.IO).launch {
+                worldInfo.id?.let { id -> deleteAllCoordinatesByIdUseCase.execute(id) }
                 val result = async {deleteWorldUseCase.execute(worldInfo.name)}.await()
                 runOnUiThread {
                     if (result) worldsAdapter.deleteWorld(worldInfo)

@@ -6,4 +6,8 @@
     <color name="primary">#a3b18a</color>
     <color name="gray">#dad7cd</color>
     <color name="button_ripple">#28a3b18a</color>
+    <color name="upper_world">#96e380</color>
+    <color name="nether">#e74141</color>
+    <color name="end">#9651e6</color>
+    <color name="translucent_text">#7E000000</color>
 </resources>

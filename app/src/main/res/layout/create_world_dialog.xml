@@ -40,7 +40,8 @@
                     android:id="@+id/inputWorldName"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Название мира" />
+                    android:hint="Название мира"
+                    android:textSize="@dimen/medium_text" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
@@ -60,7 +61,8 @@
                     android:id="@+id/inputWorldDescription"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Описание мира" />
+                    android:hint="Описание мира"
+                    android:textSize="@dimen/medium_text" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <Button
@@ -69,7 +71,7 @@
                 android:layout_height="55dp"
                 android:layout_marginBottom="20dp"
                 android:text="Создать"
-                android:textSize="18sp" />
+                android:textSize="@dimen/medium_text" />
         </LinearLayout>
 
     </androidx.cardview.widget.CardView>

@@ -7,9 +7,15 @@ import androidx.room.Query
 
 @Dao
 interface CoordinatesDao {
-    @Query("SELECT * FROM coordinates WHERE id = :id")
-    fun getCoordinatesById(id: Int): MutableList<CoordinatesEntity>
+    @Query("SELECT * FROM coordinates WHERE worldId = :worldId")
+    suspend fun getCoordinatesById(worldId: Int): MutableList<CoordinatesEntity>
 
     @Insert
-    fun addCoordinates(coordinatesEntity: CoordinatesEntity)
+    suspend fun addCoordinates(coordinatesEntity: CoordinatesEntity)
+
+    @Query("DELETE FROM coordinates WHERE worldId = :worldId")
+    suspend fun deleteAllCoordinatesById(worldId: Int)
+
+    @Delete
+    suspend fun deleteCoordinates(coordinatesEntity: CoordinatesEntity)
 }

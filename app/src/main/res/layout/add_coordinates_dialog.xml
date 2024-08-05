@@ -51,7 +51,8 @@
                         android:hint="X"
                         android:imeOptions="actionNext"
                         android:inputType="number|numberSigned"
-                        android:nextFocusRight="@id/inputY" />
+                        android:nextFocusRight="@id/inputY"
+                        android:textSize="@dimen/medium_text" />
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <com.google.android.material.textfield.TextInputLayout
@@ -74,13 +75,15 @@
                         android:hint="Y"
                         android:imeOptions="actionNext"
                         android:inputType="number|numberSigned"
-                        android:nextFocusRight="@id/inputZ" />
+                        android:nextFocusRight="@id/inputZ"
+                        android:textSize="@dimen/medium_text" />
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="5dp"
+                    android:layout_marginEnd="5dp"
                     android:layout_weight="1"
                     app:boxCornerRadiusBottomEnd="10dp"
                     app:boxCornerRadiusBottomStart="10dp"
@@ -96,7 +99,8 @@
                         android:hint="Z"
                         android:imeOptions="actionNext"
                         android:inputType="number|numberSigned"
-                        android:nextFocusDown="@id/inputCoordinatesDescription" />
+                        android:nextFocusDown="@id/inputCoordinatesDescription"
+                        android:textSize="@dimen/medium_text" />
                 </com.google.android.material.textfield.TextInputLayout>
 
             </LinearLayout>
@@ -114,21 +118,24 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:checked="true"
-                    android:text="Верхний мир" />
+                    android:text="Верхний мир"
+                    android:textSize="@dimen/medium_text" />
 
                 <RadioButton
                     android:id="@+id/netherRadio"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Ад" />
+                    android:text="Ад"
+                    android:textSize="@dimen/medium_text" />
 
                 <RadioButton
                     android:id="@+id/endRadio"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Энд" />
+                    android:text="Энд"
+                    android:textSize="@dimen/medium_text" />
 
             </RadioGroup>
 
@@ -151,7 +158,8 @@
                     android:id="@+id/inputCoordinatesDescription"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Описание" />
+                    android:hint="Описание"
+                    android:textSize="@dimen/medium_text" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <Button
@@ -163,7 +171,7 @@
                 android:layout_marginEnd="10dp"
                 android:layout_marginBottom="10dp"
                 android:text="Добавить"
-                android:textSize="18sp" />
+                android:textSize="@dimen/medium_text" />
 
         </LinearLayout>
     </androidx.cardview.widget.CardView>

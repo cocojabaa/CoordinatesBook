@@ -17,6 +17,7 @@ import com.example.coordinatebook.domain.CoordinatesRepository
 import com.example.coordinatebook.domain.models.CoordinatesInfo
 import com.example.coordinatebook.domain.models.Dimensions
 import com.example.coordinatebook.domain.usecases.coordinates.AddCoordinatesUseCase
+import com.example.coordinatebook.domain.usecases.coordinates.DeleteCoordinatesUseCase
 import com.example.coordinatebook.domain.usecases.coordinates.GetCoordinatesByIdUseCase
 import com.google.android.material.textfield.TextInputEditText
 import kotlinx.coroutines.CoroutineScope
@@ -35,7 +36,7 @@ class CoordinatesActivity : AppCompatActivity(), CoordinatesClickListener {
     val coordinatesRepository: CoordinatesRepository by lazy { CoordinatesRepositoryImpl(this) }
     val getCoordinatesByIdUseCase: GetCoordinatesByIdUseCase by lazy { GetCoordinatesByIdUseCase(coordinatesRepository) }
     val addCoordinatesUseCase: AddCoordinatesUseCase by lazy { AddCoordinatesUseCase(coordinatesRepository) }
-//    val deleteCoordinatesUseCase: DeleteCoordinatesUseCase by lazy { DeleteCoordinatesUseCase(coordinatesRepository) }
+    val deleteCoordinatesUseCase: DeleteCoordinatesUseCase by lazy { DeleteCoordinatesUseCase(coordinatesRepository) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -69,7 +70,7 @@ class CoordinatesActivity : AppCompatActivity(), CoordinatesClickListener {
     }
 
     override fun onCoordinatesLongClick(coordinatesInfo: CoordinatesInfo) {
-        // TODO
+        showDeleteCoordinatesDialog(coordinatesInfo)
     }
 
     fun showAddCoordinatesDialog() {
@@ -98,37 +99,61 @@ class CoordinatesActivity : AppCompatActivity(), CoordinatesClickListener {
             val inputDescriptionText = inputDescriptionView.text.toString()
 
             if (inputXText.isEmpty()) {
-                inputXView.error = "Введите значение"
+                runOnUiThread{ inputXView.error = "Введите значение" }
                 return@setOnClickListener
             }
             if (inputZText.isEmpty()) {
-                inputZView.error = "Введите значение"
+                runOnUiThread{ inputZView.error = "Введите значение" }
                 return@setOnClickListener
             }
+            var inputDimension: Dimensions = Dimensions.UpperWorld
+            var yCoordinate: Int? = null
+
+            if (inputYText.length != 0) yCoordinate = inputYText.toInt()
+            if (upperWorldRadio.isChecked) inputDimension = Dimensions.UpperWorld
+            if (netherRadio.isChecked) inputDimension = Dimensions.Nether
+            if (endRadio.isChecked) inputDimension = Dimensions.End
+
+            val coordinatesInfo = CoordinatesInfo(
+                worldId = worldId,
+                description = inputDescriptionText,
+                dimension = inputDimension,
+                x = inputXText.toInt(),
+                y = yCoordinate,
+                z = inputZText.toInt()
+            )
+
             CoroutineScope(Dispatchers.IO).launch {
-                lateinit var inputDimension: Dimensions
-                var yCoordinate: Int? = null
-
-                if (inputYText.length != 0) yCoordinate = inputYText.toInt()
-                if (upperWorldRadio.isActivated) inputDimension = Dimensions.UpperWorld
-                if (netherRadio.isActivated) inputDimension = Dimensions.Nether
-                if (endRadio.isActivated) inputDimension = Dimensions.End
-
-                val coordinatesInfo = CoordinatesInfo(
-                    worldId = worldId,
-                    description = inputDescriptionText,
-                    dimension = inputDimension,
-                    x = inputXText.toInt(),
-                    y = yCoordinate,
-                    z = inputZText.toInt()
-                )
-
                 val addCoordinatesSuccess = async { addCoordinatesUseCase.execute(coordinatesInfo) }.await()
-                if (addCoordinatesSuccess) runOnUiThread {
-                    adapter.addCoordinates(coordinatesInfo)
-                    dialog.dismiss()
+                if (addCoordinatesSuccess) {
+                    runOnUiThread {
+                        adapter.addCoordinates(coordinatesInfo)
+                        dialog.dismiss()
+                    }
                 }
+            }
+        }
+        dialog.show()
+    }
 
+    fun showDeleteCoordinatesDialog(coordinatesInfo: CoordinatesInfo) {
+        val dialogBinding = layoutInflater.inflate(R.layout.delete_coordinates_dialog, null)
+        val dialog = Dialog(this)
+        dialog.setContentView(dialogBinding)
+        dialog.setCancelable(true)
+        dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+
+        val deleteButton = dialogBinding.findViewById<Button>(R.id.deleteCoordinatesButton)
+        deleteButton.setOnClickListener {
+            Log.i("My", "IN DIALOG: WORLDID=${coordinatesInfo.worldId} Y=${coordinatesInfo.y} DIMEN=${coordinatesInfo.dimension}")
+            CoroutineScope(Dispatchers.IO).launch {
+                val deleteSuccess = async {deleteCoordinatesUseCase.execute(coordinatesInfo)}.await()
+                if (deleteSuccess) {
+                    runOnUiThread {
+                        adapter.deleteCoordinates(coordinatesInfo)
+                        dialog.dismiss()
+                    }
+                }
             }
         }
         dialog.show()

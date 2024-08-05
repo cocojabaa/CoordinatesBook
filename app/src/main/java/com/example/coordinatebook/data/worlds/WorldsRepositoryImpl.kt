@@ -2,14 +2,15 @@ package com.example.coordinatebook.data.worlds
 
 import android.content.Context
 import android.util.Log
+import com.example.coordinatebook.data.MainDatabase
 import com.example.coordinatebook.domain.WorldsRepository
 import com.example.coordinatebook.domain.models.WorldInfo
 
 class WorldsRepositoryImpl(val context: Context): WorldsRepository {
-    private val db = WorldsDatabase.getDb(context)
+    private val db = MainDatabase.getDb(context)
 
     override suspend fun getAllWorlds(): MutableList<WorldInfo> {
-        val worldsEntities = db.getDao().getAllWorlds()
+        val worldsEntities = db.getWorldsDao().getAllWorlds()
         var worlds = mutableListOf<WorldInfo>()
         worldsEntities.forEach {
             worlds.add(
@@ -21,7 +22,7 @@ class WorldsRepositoryImpl(val context: Context): WorldsRepository {
 
     override suspend fun deleteWorld(worldName: String): Boolean {
         try {
-            db.getDao().deleteWorld(worldName)
+            db.getWorldsDao().deleteWorld(worldName)
             return true
         } catch (ex: Exception) {
             Log.e("My", "DELETE WORLD ERROR: ${ex.message}")
@@ -32,8 +33,8 @@ class WorldsRepositoryImpl(val context: Context): WorldsRepository {
     override suspend fun addWorld(worldInfo: WorldInfo): Int? {
         try {
             val entity = WorldEntity(worldInfo.id, worldInfo.name, worldInfo.description)
-            db.getDao().addWorld(entity)
-            return db.getDao().getWorldByName(worldInfo.name).id
+            db.getWorldsDao().addWorld(entity)
+            return db.getWorldsDao().getWorldByName(worldInfo.name).id
         } catch (ex: Exception) {
             Log.e("My", "ADD WORLD ERROR: ${ex.message}")
             return null
@@ -42,7 +43,7 @@ class WorldsRepositoryImpl(val context: Context): WorldsRepository {
 
     override suspend fun getWorldIdByName(worldName: String): Int? {
         try {
-            val worldEntity = db.getDao().getWorldByName(worldName)
+            val worldEntity = db.getWorldsDao().getWorldByName(worldName)
             return worldEntity.id
         } catch (ex: Exception) {
             Log.e("My", "GET WORLD ERROR: ${ex.message}")
