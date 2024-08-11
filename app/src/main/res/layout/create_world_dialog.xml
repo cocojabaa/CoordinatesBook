@@ -9,6 +9,7 @@
         android:id="@+id/card"
         android:layout_width="350dp"
         android:layout_height="wrap_content"
+        app:cardBackgroundColor="@color/items_background"
         app:cardCornerRadius="20dp"
         app:cardElevation="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -71,6 +72,7 @@
                 android:layout_height="55dp"
                 android:layout_marginBottom="20dp"
                 android:text="Создать"
+                android:textColor="@color/white"
                 android:textSize="@dimen/medium_text" />
         </LinearLayout>
 

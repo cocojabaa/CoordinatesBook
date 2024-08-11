@@ -17,6 +17,7 @@
         android:focusable="true"
         android:foreground="@drawable/selectable_item_background"
         android:paddingBottom="10dp"
+        app:cardBackgroundColor="@color/items_background"
         app:cardCornerRadius="5dp"
         app:cardElevation="3dp"
         app:layout_constraintBottom_toBottomOf="parent"

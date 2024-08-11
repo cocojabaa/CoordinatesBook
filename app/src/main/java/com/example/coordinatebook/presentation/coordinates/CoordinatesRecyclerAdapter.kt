@@ -35,6 +35,10 @@ class CoordinatesRecyclerAdapter(
                 listener.onCoordinatesLongClick(coordinatesInfo)
                 true
             }
+
+            binding.card.setOnClickListener {
+                listener.onCoordinatesClick(coordinatesInfo)
+            }
         }
     }
 

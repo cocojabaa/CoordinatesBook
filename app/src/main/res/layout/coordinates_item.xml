@@ -14,6 +14,7 @@
         android:clickable="true"
         android:focusable="true"
         android:foreground="@drawable/selectable_item_background"
+        app:cardBackgroundColor="@color/items_background"
         app:cardCornerRadius="0dp"
         app:cardElevation="3dp"
         app:layout_constraintBottom_toBottomOf="parent"

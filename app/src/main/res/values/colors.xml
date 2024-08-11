@@ -10,4 +10,6 @@
     <color name="nether">#e74141</color>
     <color name="end">#9651e6</color>
     <color name="translucent_text">#7E000000</color>
+    <color name="items_background">#FBFFFB</color>
+    <color name="main_background">#ECEDEB</color>
 </resources>

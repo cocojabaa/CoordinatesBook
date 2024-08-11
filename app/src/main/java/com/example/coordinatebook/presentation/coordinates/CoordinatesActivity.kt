@@ -1,6 +1,8 @@
 package com.example.coordinatebook.presentation.coordinates
 
 import android.app.Dialog
+import android.content.ClipData
+import android.content.ClipboardManager
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
@@ -8,6 +10,7 @@ import android.util.Log
 import android.view.MenuItem
 import android.widget.Button
 import android.widget.RadioButton
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.coordinatebook.R
@@ -30,6 +33,8 @@ class CoordinatesActivity : AppCompatActivity(), CoordinatesClickListener {
 
     lateinit var adapter: CoordinatesRecyclerAdapter
 
+    var clipboard: ClipboardManager? = null
+
     val worldName: String by lazy { intent.getStringExtra("worldName").toString() }
     val worldId: Int by lazy { intent.getIntExtra("worldId", 0) }
 
@@ -45,6 +50,8 @@ class CoordinatesActivity : AppCompatActivity(), CoordinatesClickListener {
         setSupportActionBar(binding.toolbar)
         supportActionBar?.title = worldName
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
+
+        clipboard = getSystemService(CLIPBOARD_SERVICE) as ClipboardManager?
 
         initRecyclerView(worldId)
 
@@ -71,6 +78,14 @@ class CoordinatesActivity : AppCompatActivity(), CoordinatesClickListener {
 
     override fun onCoordinatesLongClick(coordinatesInfo: CoordinatesInfo) {
         showDeleteCoordinatesDialog(coordinatesInfo)
+    }
+
+    override fun onCoordinatesClick(coordinatesInfo: CoordinatesInfo) {
+        var coordinatesText = ""
+        if (coordinatesInfo.y == null) coordinatesText = "${coordinatesInfo.x} ${coordinatesInfo.z}"
+        else coordinatesText = "${coordinatesInfo.x} ${coordinatesInfo.y} ${coordinatesInfo.z}"
+        clipboard?.setPrimaryClip(ClipData.newPlainText("0", coordinatesText))
+        Toast.makeText(this, "Координаты скопированы!", Toast.LENGTH_SHORT).show()
     }
 
     fun showAddCoordinatesDialog() {

@@ -8,6 +8,8 @@
         android:id="@+id/card"
         android:layout_width="350dp"
         android:layout_height="wrap_content"
+        android:background="@color/items_background"
+        app:cardBackgroundColor="@color/items_background"
         app:cardCornerRadius="20dp"
         app:cardElevation="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -171,6 +173,7 @@
                 android:layout_marginEnd="10dp"
                 android:layout_marginBottom="10dp"
                 android:text="Добавить"
+                android:textColor="@color/white"
                 android:textSize="@dimen/medium_text" />
 
         </LinearLayout>
