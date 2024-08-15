@@ -75,7 +75,6 @@ class MainActivity : AppCompatActivity(), WorldClickListener {
         val intent = Intent(this, CoordinatesActivity::class.java)
         intent.putExtra("worldId", worldInfo.id)
         intent.putExtra("worldName", worldInfo.name)
-        Log.i("My", "WORLD ID ON CLICK: ${worldInfo.id}")
         startActivity(intent)
     }
 

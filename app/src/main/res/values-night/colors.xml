@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="primary">#588157</color>
+    <color name="primary">#31572c</color>
+<!--    <color name="primary">#588157</color>-->
     <color name="translucent_text">#7AFFFFFF</color>
     <color name="main_background">#222422</color>
     <color name="items_background">#3B3E3A</color>

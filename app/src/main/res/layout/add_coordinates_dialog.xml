@@ -107,6 +107,13 @@
 
             </LinearLayout>
 
+            <Button
+                android:id="@+id/pasteCoordinates"
+                android:layout_width="230dp"
+                android:layout_height="40dp"
+                android:text="Из буфера обмена"
+                android:textSize="@dimen/small_text" />
+
             <RadioGroup
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
