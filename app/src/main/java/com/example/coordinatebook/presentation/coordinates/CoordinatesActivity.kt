@@ -6,7 +6,6 @@ import android.content.ClipboardManager
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
-import android.text.Editable
 import android.util.Log
 import android.view.MenuItem
 import android.widget.Button
@@ -61,13 +60,11 @@ class CoordinatesActivity : AppCompatActivity(), CoordinatesClickListener {
         }
 
     }
-
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if (item.itemId == android.R.id.home) finish()
         return true
     }
-
-    fun initRecyclerView(worldId: Int) {
+    private fun initRecyclerView(worldId: Int) {
         CoroutineScope(Dispatchers.IO).launch {
             val coordinatesList = async{getCoordinatesByIdUseCase.execute(worldId)}.await()
             adapter = CoordinatesRecyclerAdapter(coordinatesList, this@CoordinatesActivity)
@@ -76,9 +73,6 @@ class CoordinatesActivity : AppCompatActivity(), CoordinatesClickListener {
         }
     }
 
-    override fun onCoordinatesLongClick(coordinatesInfo: CoordinatesInfo) {
-        showDeleteCoordinatesDialog(coordinatesInfo)
-    }
 
     override fun onCoordinatesClick(coordinatesInfo: CoordinatesInfo) {
         var coordinatesText = ""
@@ -89,24 +83,24 @@ class CoordinatesActivity : AppCompatActivity(), CoordinatesClickListener {
     }
 
     fun showAddCoordinatesDialog() {
-        val dialogBinding = layoutInflater.inflate(R.layout.add_coordinates_dialog, null)
-        val dialog = Dialog(this)
-        dialog.setContentView(dialogBinding)
-        dialog.setCancelable(true)
-        dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        val addDialogBinding = layoutInflater.inflate(R.layout.add_coordinates_dialog, null)
+        val addDialog = Dialog(this)
+        addDialog.setContentView(addDialogBinding)
+        addDialog.setCancelable(true)
+        addDialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
 
 
-        val addButton = dialogBinding.findViewById<Button>(R.id.addCoordinatesButton)
-        val pasteButton = dialogBinding.findViewById<Button>(R.id.pasteCoordinates)
+        val addButton = addDialogBinding.findViewById<Button>(R.id.addCoordinatesButton)
+        val pasteButton = addDialogBinding.findViewById<Button>(R.id.pasteCoordinates)
 
-        val inputXView = dialogBinding.findViewById<TextInputEditText>(R.id.inputX)
-        val inputYView = dialogBinding.findViewById<TextInputEditText>(R.id.inputY)
-        val inputZView = dialogBinding.findViewById<TextInputEditText>(R.id.inputZ)
-        val inputDescriptionView = dialogBinding.findViewById<TextInputEditText>(R.id.inputCoordinatesDescription)
+        val inputXView = addDialogBinding.findViewById<TextInputEditText>(R.id.inputX)
+        val inputYView = addDialogBinding.findViewById<TextInputEditText>(R.id.inputY)
+        val inputZView = addDialogBinding.findViewById<TextInputEditText>(R.id.inputZ)
+        val inputDescriptionView = addDialogBinding.findViewById<TextInputEditText>(R.id.inputCoordinatesDescription)
 
-        val upperWorldRadio = dialogBinding.findViewById<RadioButton>(R.id.upperWorldRadio)
-        val netherRadio = dialogBinding.findViewById<RadioButton>(R.id.netherRadio)
-        val endRadio = dialogBinding.findViewById<RadioButton>(R.id.endRadio)
+        val upperWorldRadio = addDialogBinding.findViewById<RadioButton>(R.id.upperWorldRadio)
+        val netherRadio = addDialogBinding.findViewById<RadioButton>(R.id.netherRadio)
+        val endRadio = addDialogBinding.findViewById<RadioButton>(R.id.endRadio)
 
 
         addButton.setOnClickListener {
@@ -141,71 +135,130 @@ class CoordinatesActivity : AppCompatActivity(), CoordinatesClickListener {
             )
 
             CoroutineScope(Dispatchers.IO).launch {
-                val addCoordinatesSuccess = async { addCoordinatesUseCase.execute(coordinatesInfo) }.await()
-                if (addCoordinatesSuccess) {
-                    runOnUiThread {
+                val newCoordinatesId = async { addCoordinatesUseCase.execute(coordinatesInfo) }.await()
+                runOnUiThread {
+                    if (newCoordinatesId != null) {
+                        coordinatesInfo.id = newCoordinatesId
                         adapter.addCoordinates(coordinatesInfo)
-                        dialog.dismiss()
-                    }
+                        addDialog.dismiss()
+                    } else Toast.makeText(this@CoordinatesActivity, "Координаты не записались (id = null)", Toast.LENGTH_SHORT).show()
                 }
             }
         }
 
         pasteButton.setOnClickListener {
-            val clipData = clipboard?.primaryClip
-            if (clipData != null && clipData.itemCount > 0) {
-                val clipDataText = clipData.getItemAt(0).coerceToText(this).toString()
-                if (isCoordinatesCorrect(clipDataText)) {
-                    val coordinates = clipDataText.split(" ")
-
-                    val inputXView = dialogBinding.findViewById<TextInputEditText>(R.id.inputX)
-                    val inputYView = dialogBinding.findViewById<TextInputEditText>(R.id.inputY)
-                    val inputZView = dialogBinding.findViewById<TextInputEditText>(R.id.inputZ)
-
-                    when (coordinates.size) {
-                        3 -> {
-                            inputXView.setText(coordinates[0])
-                            inputYView.setText(coordinates[1])
-                            inputZView.setText(coordinates[2])
-                        }
-                        2 -> {
-                            inputXView.setText(coordinates[0])
-                            inputZView.setText(coordinates[1])
-                        }
-                    }
-                } else Toast.makeText(this, "Неверный формат скопированного текста", Toast.LENGTH_SHORT).show()
-            } else Toast.makeText(this, "Нет скопированного текста", Toast.LENGTH_SHORT).show()
+            val inputXView = addDialogBinding.findViewById<TextInputEditText>(R.id.inputX)
+            val inputYView = addDialogBinding.findViewById<TextInputEditText>(R.id.inputY)
+            val inputZView = addDialogBinding.findViewById<TextInputEditText>(R.id.inputZ)
+            pasteCoordinates(inputXView, inputYView, inputZView)
         }
 
-        dialog.show()
+        addDialog.show()
     }
 
-    fun showDeleteCoordinatesDialog(coordinatesInfo: CoordinatesInfo) {
-        val dialogBinding = layoutInflater.inflate(R.layout.delete_coordinates_dialog, null)
-        val dialog = Dialog(this)
-        dialog.setContentView(dialogBinding)
-        dialog.setCancelable(true)
-        dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+    override fun onCoordinatesLongClick(coordinatesInfo: CoordinatesInfo) {
+        val settingDialogBinding = layoutInflater.inflate(R.layout.setting_dialog, null)
+        val settingDialog = Dialog(this)
+        settingDialog.setContentView(settingDialogBinding)
+        settingDialog.setCancelable(true)
+        settingDialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
 
-        val deleteButton = dialogBinding.findViewById<Button>(R.id.deleteCoordinatesButton)
+        val deleteButton = settingDialogBinding.findViewById<Button>(R.id.deleteButton)
+        val editButton = settingDialogBinding.findViewById<Button>(R.id.editButton)
         deleteButton.setOnClickListener {
+            var coordinatesId = 0
+            if (coordinatesInfo.id != null) coordinatesId = coordinatesInfo.id!!
+            else {
+                Log.e("My", "COORDINATES ID IS NULL")
+                return@setOnClickListener
+            }
             CoroutineScope(Dispatchers.IO).launch {
-                val deleteSuccess = async {deleteCoordinatesUseCase.execute(coordinatesInfo)}.await()
+                val deleteSuccess = async {deleteCoordinatesUseCase.execute(coordinatesId)}.await()
                 if (deleteSuccess) {
                     runOnUiThread {
                         adapter.deleteCoordinates(coordinatesInfo)
-                        dialog.dismiss()
+                        settingDialog.dismiss()
                     }
                 }
             }
         }
-        dialog.show()
+
+        editButton.setOnClickListener {
+            showEditCoordinatesDialog(coordinatesInfo)
+            settingDialog.dismiss()
+        }
+
+        settingDialog.show()
     }
+
+    fun showEditCoordinatesDialog(coordinatesInfo: CoordinatesInfo) {
+        val editDialogBinding = layoutInflater.inflate(R.layout.edit_coordinates_dialog, null)
+        val editDialog = Dialog(this)
+        editDialog.setContentView(editDialogBinding)
+        editDialog.setCancelable(true)
+        editDialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+
+        val acceptButton = editDialogBinding.findViewById<Button>(R.id.acceptChangesCoordinatesButton)
+        val pasteButton = editDialogBinding.findViewById<Button>(R.id.pasteCoordinatesInEdit)
+
+        Log.i("My", "BUTTONS OK")
+
+        val editXView = editDialogBinding.findViewById<TextInputEditText>(R.id.editX)
+        val editYView = editDialogBinding.findViewById<TextInputEditText>(R.id.editY)
+        val editZView = editDialogBinding.findViewById<TextInputEditText>(R.id.editZ)
+        val editDescriptionView = editDialogBinding.findViewById<TextInputEditText>(R.id.editCoordinatesDescription)
+
+        val upperWorldRadio = editDialogBinding.findViewById<RadioButton>(R.id.upperWorldRadioInEdit)
+        val netherRadio = editDialogBinding.findViewById<RadioButton>(R.id.netherRadioInEdit)
+        val endRadio = editDialogBinding.findViewById<RadioButton>(R.id.endRadioInEdit)
+
+        editXView.setText(coordinatesInfo.x.toString())
+        if (coordinatesInfo.y != null) editYView.setText(coordinatesInfo.y.toString())
+        editZView.setText(coordinatesInfo.z.toString())
+        when (coordinatesInfo.dimension) {
+            Dimensions.UpperWorld -> upperWorldRadio.isChecked = true
+            Dimensions.End -> endRadio.isChecked = true
+            Dimensions.Nether -> netherRadio.isChecked = true
+        }
+        editDescriptionView.setText(coordinatesInfo.description)
+
+        acceptButton.setOnClickListener {
+
+        }
+        pasteButton.setOnClickListener {
+            pasteCoordinates(editXView, editYView, editZView)
+        }
+
+        editDialog.show()
+    }
+
 
     fun isCoordinatesCorrect(clipDataText: String): Boolean {
         Log.i("My", "INPUT VALIDATOR: ${clipDataText}")
         val pattern = "-?\\d+ (-?\\d+ )?-?\\d+"
         return Regex(pattern).matches(clipDataText)
+    }
+
+    fun pasteCoordinates(inputXView: TextInputEditText, inputYView: TextInputEditText, inputZView: TextInputEditText) {
+        val clipData = clipboard?.primaryClip
+        if (clipData != null && clipData.itemCount > 0) {
+            val clipDataText = clipData.getItemAt(0).coerceToText(this).toString()
+            if (isCoordinatesCorrect(clipDataText)) {
+                val coordinates = clipDataText.split(" ")
+
+                when (coordinates.size) {
+                    3 -> {
+                        inputXView.setText(coordinates[0])
+                        inputYView.setText(coordinates[1])
+                        inputZView.setText(coordinates[2])
+                    }
+                    2 -> {
+                        inputXView.setText(coordinates[0])
+                        inputZView.setText(coordinates[1])
+                    }
+                }
+            } else Toast.makeText(this, "Неверный формат скопированного текста", Toast.LENGTH_SHORT).show()
+        } else Toast.makeText(this, "Нет скопированного текста", Toast.LENGTH_SHORT).show()
     }
 
 

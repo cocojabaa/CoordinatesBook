@@ -4,7 +4,7 @@ import com.example.coordinatebook.domain.CoordinatesRepository
 import com.example.coordinatebook.domain.models.CoordinatesInfo
 
 class DeleteCoordinatesUseCase(val repository: CoordinatesRepository) {
-    suspend fun execute(coordinatesInfo: CoordinatesInfo): Boolean {
-        return repository.deleteCoordinates(coordinatesInfo)
+    suspend fun execute(coordinatesId: Int): Boolean {
+        return repository.deleteCoordinates(coordinatesId)
     }
 }

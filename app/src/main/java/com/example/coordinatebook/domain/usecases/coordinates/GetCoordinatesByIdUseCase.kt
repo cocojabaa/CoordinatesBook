@@ -5,6 +5,6 @@ import com.example.coordinatebook.domain.models.CoordinatesInfo
 
 class GetCoordinatesByIdUseCase(val repository: CoordinatesRepository) {
     suspend fun execute(worldId: Int): MutableList<CoordinatesInfo> {
-        return repository.getCoordinatesById(worldId)
+        return repository.getCoordinatesByWorldId(worldId)
     }
 }

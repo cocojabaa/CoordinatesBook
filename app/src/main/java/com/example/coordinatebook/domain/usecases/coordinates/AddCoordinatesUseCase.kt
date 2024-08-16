@@ -4,7 +4,7 @@ import com.example.coordinatebook.domain.CoordinatesRepository
 import com.example.coordinatebook.domain.models.CoordinatesInfo
 
 class AddCoordinatesUseCase(val repository: CoordinatesRepository) {
-    suspend fun execute(coordinatesInfo: CoordinatesInfo): Boolean {
+    suspend fun execute(coordinatesInfo: CoordinatesInfo): Int? {
         return repository.addCoordinates(coordinatesInfo)
     }
 }

@@ -4,6 +4,6 @@ import com.example.coordinatebook.domain.CoordinatesRepository
 
 class DeleteAllCoordinatesByIdUseCase(val repository: CoordinatesRepository) {
     suspend fun execute(worldId: Int): Boolean {
-        return repository.deleteAllCoordinatesById(worldId)
+        return repository.deleteAllCoordinatesByWorldId(worldId)
     }
 }

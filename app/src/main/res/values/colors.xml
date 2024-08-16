@@ -11,4 +11,5 @@
     <color name="translucent_text">#7E000000</color>
     <color name="items_background">#FBFFFB</color>
     <color name="main_background">#ECEDEB</color>
+    <color name="delete_button">#F84141</color>
 </resources>

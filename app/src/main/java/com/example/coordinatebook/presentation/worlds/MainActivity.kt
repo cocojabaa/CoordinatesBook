@@ -7,7 +7,6 @@ import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.util.Log
 import android.widget.Button
-import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -79,20 +78,45 @@ class MainActivity : AppCompatActivity(), WorldClickListener {
     }
 
     override fun onWorldLongClick(worldInfo: WorldInfo) {
-        showDeleteWorldDialog(worldInfo)
+        val settingDialogBinding = layoutInflater.inflate(R.layout.setting_dialog, null)
+        val settingDialog = Dialog(this)
+        settingDialog.setContentView(settingDialogBinding)
+        settingDialog.setCancelable(true)
+        settingDialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+
+        val deleteButton = settingDialogBinding.findViewById<Button>(R.id.deleteButton)
+        val editButton = settingDialogBinding.findViewById<Button>(R.id.editButton)
+
+        deleteButton.setOnClickListener {
+            CoroutineScope(Dispatchers.IO).launch {
+                worldInfo.id?.let { id -> deleteAllCoordinatesByIdUseCase.execute(id) }
+                val deleteSuccess = async {deleteWorldUseCase.execute(worldInfo.name)}.await()
+                runOnUiThread {
+                    if (deleteSuccess) {
+                        worldsAdapter.deleteWorld(worldInfo)
+                        settingDialog.dismiss()
+                    }
+                }
+            }
+        }
+        editButton.setOnClickListener {
+            showEditWorldDialog(worldInfo)
+            settingDialog.dismiss()
+        }
+        settingDialog.show()
     }
 
     fun showCreateWorldDialog() {
-        val dialogBinding = layoutInflater.inflate(R.layout.create_world_dialog, null)
-        val dialog = Dialog(this)
-        dialog.setContentView(dialogBinding)
-        dialog.setCancelable(true)
-        dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        val createDialogBinding = layoutInflater.inflate(R.layout.create_world_dialog, null)
+        val createDialog = Dialog(this)
+        createDialog.setContentView(createDialogBinding)
+        createDialog.setCancelable(true)
+        createDialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
 
-        val doneButton = dialogBinding.findViewById<Button>(R.id.doneButton)
+        val doneButton = createDialogBinding.findViewById<Button>(R.id.doneButton)
         doneButton.setOnClickListener {
-            val nameView = dialogBinding.findViewById<TextInputEditText>(R.id.inputWorldName)
-            val descriptionView = dialogBinding.findViewById<TextInputEditText>(R.id.inputWorldDescription)
+            val nameView = createDialogBinding.findViewById<TextInputEditText>(R.id.inputWorldName)
+            val descriptionView = createDialogBinding.findViewById<TextInputEditText>(R.id.inputWorldDescription)
             val nameText = nameView.text.toString()
             val descriptionText = descriptionView.text.toString()
 
@@ -116,38 +140,33 @@ class MainActivity : AppCompatActivity(), WorldClickListener {
                     if (newWorldId != null) {
                         worldInfo.id = newWorldId
                         worldsAdapter.addWorld(worldInfo)
-                        Log.i("My", "WORLD ID AFTER ADAPTER ${worldInfo.id}")
-                        dialog.dismiss()
+                        createDialog.dismiss()
                     } else Toast.makeText(this@MainActivity, "Мир не записался (worldId = null)", Toast.LENGTH_SHORT).show()
                 }
             }
         }
-        dialog.show()
+        createDialog.show()
     }
 
-    fun showDeleteWorldDialog(worldInfo: WorldInfo) {
-        val dialogBinding = layoutInflater.inflate(R.layout.delete_world_dialog, null)
-        val dialog = Dialog(this)
-        dialog.setContentView(dialogBinding)
-        dialog.setCancelable(true)
-        dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+    fun showEditWorldDialog(worldInfo: WorldInfo) {
+        val editDialogBinding = layoutInflater.inflate(R.layout.edit_world_dialog, null)
+        val editDialog = Dialog(this)
+        editDialog.setContentView(editDialogBinding)
+        editDialog.setCancelable(true)
+        editDialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
 
-        val worldNameText = dialog.findViewById<TextView>(R.id.worldNameText)
-        worldNameText.text = worldInfo.name
+        val nameView = editDialogBinding.findViewById<TextInputEditText>(R.id.editWorldName)
+        val descriptionView = editDialogBinding.findViewById<TextInputEditText>(R.id.editWorldDescription)
+        val acceptButton = editDialogBinding.findViewById<Button>(R.id.acceptChangesWorldButton)
 
-        val deleteButton = dialog.findViewById<Button>(R.id.deleteWorldButton)
-        deleteButton.setOnClickListener {
-            CoroutineScope(Dispatchers.IO).launch {
-                worldInfo.id?.let { id -> deleteAllCoordinatesByIdUseCase.execute(id) }
-                val result = async {deleteWorldUseCase.execute(worldInfo.name)}.await()
-                runOnUiThread {
-                    if (result) worldsAdapter.deleteWorld(worldInfo)
-                    else Toast.makeText(this@MainActivity, "Мир не удалился(", Toast.LENGTH_SHORT).show()
-                    dialog.dismiss()
-                }
-            }
+        acceptButton.setOnClickListener {
+
         }
-        dialog.show()
+
+        nameView.setText(worldInfo.name)
+        descriptionView.setText(worldInfo.description)
+
+        editDialog.show()
     }
 
     suspend fun isWorldUnique(worldName: String): Boolean {

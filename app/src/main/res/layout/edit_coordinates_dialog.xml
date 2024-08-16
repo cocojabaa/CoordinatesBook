@@ -24,7 +24,6 @@
             android:orientation="vertical">
 
             <LinearLayout
-                android:id="@+id/coordinatesLinearLayout"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="horizontal"
@@ -47,13 +46,13 @@
                     app:hintTextColor="@color/primary">
 
                     <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/inputX"
+                        android:id="@+id/editX"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:hint="X"
                         android:imeOptions="actionNext"
                         android:inputType="number|numberSigned"
-                        android:nextFocusRight="@id/inputY"
+                        android:nextFocusRight="@id/editY"
                         android:textSize="@dimen/medium_text" />
                 </com.google.android.material.textfield.TextInputLayout>
 
@@ -71,13 +70,13 @@
                     app:hintTextColor="@color/primary">
 
                     <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/inputY"
+                        android:id="@+id/editY"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:hint="Y"
                         android:imeOptions="actionNext"
                         android:inputType="number|numberSigned"
-                        android:nextFocusRight="@id/inputZ"
+                        android:nextFocusRight="@id/editZ"
                         android:textSize="@dimen/medium_text" />
                 </com.google.android.material.textfield.TextInputLayout>
 
@@ -95,20 +94,20 @@
                     app:hintTextColor="@color/primary">
 
                     <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/inputZ"
+                        android:id="@+id/editZ"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:hint="Z"
                         android:imeOptions="actionNext"
                         android:inputType="number|numberSigned"
-                        android:nextFocusDown="@id/inputCoordinatesDescription"
+                        android:nextFocusDown="@id/editCoordinatesDescription"
                         android:textSize="@dimen/medium_text" />
                 </com.google.android.material.textfield.TextInputLayout>
 
             </LinearLayout>
 
             <Button
-                android:id="@+id/pasteCoordinates"
+                android:id="@+id/pasteCoordinatesInEdit"
                 android:layout_width="230dp"
                 android:layout_height="40dp"
                 android:text="Из буфера обмена"
@@ -123,7 +122,7 @@
                 android:paddingEnd="10dp">
 
                 <RadioButton
-                    android:id="@+id/upperWorldRadio"
+                    android:id="@+id/upperWorldRadioInEdit"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
@@ -132,7 +131,7 @@
                     android:textSize="@dimen/medium_text" />
 
                 <RadioButton
-                    android:id="@+id/netherRadio"
+                    android:id="@+id/netherRadioInEdit"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
@@ -140,7 +139,7 @@
                     android:textSize="@dimen/medium_text" />
 
                 <RadioButton
-                    android:id="@+id/endRadio"
+                    android:id="@+id/endRadioInEdit"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
@@ -165,7 +164,7 @@
                 app:hintTextColor="@color/primary">
 
                 <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/inputCoordinatesDescription"
+                    android:id="@+id/editCoordinatesDescription"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="Описание"
@@ -173,14 +172,14 @@
             </com.google.android.material.textfield.TextInputLayout>
 
             <Button
-                android:id="@+id/addCoordinatesButton"
+                android:id="@+id/acceptChangesCoordinatesButton"
                 android:layout_width="200dp"
                 android:layout_height="55dp"
                 android:layout_marginStart="10dp"
                 android:layout_marginTop="10dp"
                 android:layout_marginEnd="10dp"
                 android:layout_marginBottom="10dp"
-                android:text="Добавить"
+                android:text="Изменить"
                 android:textColor="@color/white"
                 android:textSize="@dimen/medium_text" />
 

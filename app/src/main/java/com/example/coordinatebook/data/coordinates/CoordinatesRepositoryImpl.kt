@@ -10,7 +10,7 @@ import com.example.coordinatebook.domain.models.Dimensions
 class CoordinatesRepositoryImpl(context: Context): CoordinatesRepository {
     val db = MainDatabase.getDb(context)
 
-    override suspend fun getCoordinatesById(worldId: Int): MutableList<CoordinatesInfo> {
+    override suspend fun getCoordinatesByWorldId(worldId: Int): MutableList<CoordinatesInfo> {
         val coordinatesEntities = db.getCoordinatesDao().getCoordinatesById(worldId)
         var coordinatesInfoList = mutableListOf<CoordinatesInfo>()
         coordinatesEntities.forEach {
@@ -22,14 +22,14 @@ class CoordinatesRepositoryImpl(context: Context): CoordinatesRepository {
             }
             coordinatesInfoList.add(
                 CoordinatesInfo(
-                    it.worldId, it.description, dimensionValue, it.x, it.y, it.z
+                    it.id, it.worldId, it.description, dimensionValue, it.x, it.y, it.z
                 )
             )
         }
         return coordinatesInfoList
     }
 
-    override suspend fun addCoordinates(coordinatesInfo: CoordinatesInfo): Boolean {
+    override suspend fun addCoordinates(coordinatesInfo: CoordinatesInfo): Int? {
         try {
             val coordinatesEntity = CoordinatesEntity(
                 worldId = coordinatesInfo.worldId,
@@ -41,32 +41,22 @@ class CoordinatesRepositoryImpl(context: Context): CoordinatesRepository {
             )
             Log.i("My", "REPOS ID=${coordinatesEntity.worldId} DES=${coordinatesEntity.description} DIM=${coordinatesEntity.dimension} X=${coordinatesEntity.x} Y=${coordinatesEntity.y} Z=${coordinatesEntity.z}")
             db.getCoordinatesDao().addCoordinates(coordinatesEntity)
-            return true
-        } catch (ex: Exception) {
-            Log.e("My", "ADD COORDINATES ERROR: ${ex.message}")
-            return false
-        }
-    }
-
-    override suspend fun deleteCoordinates(coordinatesInfo: CoordinatesInfo): Boolean {
-        try {
-//            val coordinatesEntity = CoordinatesEntity(
-//                worldId = coordinatesInfo.worldId,
-//                description = coordinatesInfo.description,
-//                dimension = coordinatesInfo.dimension.value,
-//                x = coordinatesInfo.x,
-//                y = coordinatesInfo.y,
-//                z = coordinatesInfo.z,
-//            )
-            Log.i("My", "IN REPOS WORLDID=${coordinatesInfo.worldId} DESC=${coordinatesInfo.description} DIMEN=${coordinatesInfo.dimension} X=${coordinatesInfo.x} Y=${coordinatesInfo.y} Z=${coordinatesInfo.z}")
-            db.getCoordinatesDao().deleteCoordinates(
+            return db.getCoordinatesDao().getCoordinatesId(
                 coordinatesInfo.worldId,
                 coordinatesInfo.description,
                 coordinatesInfo.dimension.value,
                 coordinatesInfo.x,
-//                coordinatesInfo.y,
                 coordinatesInfo.z
-            )
+            ).id
+        } catch (ex: Exception) {
+            Log.e("My", "ADD COORDINATES ERROR: ${ex.message}")
+            return null
+        }
+    }
+
+    override suspend fun deleteCoordinates(coordinatesId: Int): Boolean {
+        try {
+            db.getCoordinatesDao().deleteCoordinates(coordinatesId)
             return true
         } catch(ex: Exception) {
             Log.e("My", "DELETE COORDINATES ERROR: ${ex.message}")
@@ -74,7 +64,7 @@ class CoordinatesRepositoryImpl(context: Context): CoordinatesRepository {
         }
     }
 
-    override suspend fun deleteAllCoordinatesById(worldId: Int): Boolean {
+    override suspend fun deleteAllCoordinatesByWorldId(worldId: Int): Boolean {
         try {
             db.getCoordinatesDao().deleteAllCoordinatesById(worldId)
             return true
@@ -83,4 +73,6 @@ class CoordinatesRepositoryImpl(context: Context): CoordinatesRepository {
             return false
         }
     }
+
+
 }
