@@ -20,9 +20,9 @@ class WorldsRepositoryImpl(val context: Context): WorldsRepository {
         return worlds
     }
 
-    override suspend fun deleteWorld(worldName: String): Boolean {
+    override suspend fun deleteWorld(worldId: Int?): Boolean {
         try {
-            db.getWorldsDao().deleteWorld(worldName)
+            db.getWorldsDao().deleteWorld(worldId)
             return true
         } catch (ex: Exception) {
             Log.e("My", "DELETE WORLD ERROR: ${ex.message}")
@@ -48,6 +48,16 @@ class WorldsRepositoryImpl(val context: Context): WorldsRepository {
         } catch (ex: Exception) {
             Log.e("My", "GET WORLD ERROR: ${ex.message}")
             return null
+        }
+    }
+
+    override suspend fun editWorld(newWorldInfo: WorldInfo): Boolean {
+        try {
+            db.getWorldsDao().editWorld(newWorldInfo.id, newWorldInfo.name, newWorldInfo.description)
+            return true
+        } catch (ex: Exception) {
+            Log.e("My", "GET WORLD ERROR: ${ex.message}")
+            return false
         }
     }
 }

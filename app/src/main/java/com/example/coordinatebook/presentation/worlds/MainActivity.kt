@@ -5,7 +5,6 @@ import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
-import android.util.Log
 import android.widget.Button
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -20,6 +19,7 @@ import com.example.coordinatebook.domain.models.WorldInfo
 import com.example.coordinatebook.domain.usecases.coordinates.DeleteAllCoordinatesByIdUseCase
 import com.example.coordinatebook.domain.usecases.worlds.AddWorldUseCase
 import com.example.coordinatebook.domain.usecases.worlds.DeleteWorldUseCase
+import com.example.coordinatebook.domain.usecases.worlds.EditWorldUseCase
 import com.example.coordinatebook.domain.usecases.worlds.GetAllWorldsUseCase
 import com.example.coordinatebook.presentation.coordinates.CoordinatesActivity
 import com.google.android.material.textfield.TextInputEditText
@@ -38,6 +38,7 @@ class MainActivity : AppCompatActivity(), WorldClickListener {
     val getAllWorldsUseCase: GetAllWorldsUseCase by lazy { GetAllWorldsUseCase(worldsRepository) }
     val addWorldUseCase: AddWorldUseCase by lazy { AddWorldUseCase(worldsRepository) }
     val deleteWorldUseCase: DeleteWorldUseCase by lazy { DeleteWorldUseCase(worldsRepository) }
+    val editWorldUseCase: EditWorldUseCase by lazy { EditWorldUseCase(worldsRepository) }
 
     val deleteAllCoordinatesByIdUseCase: DeleteAllCoordinatesByIdUseCase by lazy { DeleteAllCoordinatesByIdUseCase(coordinatesRepository) }
 
@@ -89,8 +90,8 @@ class MainActivity : AppCompatActivity(), WorldClickListener {
 
         deleteButton.setOnClickListener {
             CoroutineScope(Dispatchers.IO).launch {
-                worldInfo.id?.let { id -> deleteAllCoordinatesByIdUseCase.execute(id) }
-                val deleteSuccess = async {deleteWorldUseCase.execute(worldInfo.name)}.await()
+                val deleteSuccess = async {deleteWorldUseCase.execute(worldInfo.id)}.await()
+                if (deleteSuccess) worldInfo.id?.let { id -> deleteAllCoordinatesByIdUseCase.execute(id) }
                 runOnUiThread {
                     if (deleteSuccess) {
                         worldsAdapter.deleteWorld(worldInfo)
@@ -155,16 +156,29 @@ class MainActivity : AppCompatActivity(), WorldClickListener {
         editDialog.setCancelable(true)
         editDialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
 
-        val nameView = editDialogBinding.findViewById<TextInputEditText>(R.id.editWorldName)
-        val descriptionView = editDialogBinding.findViewById<TextInputEditText>(R.id.editWorldDescription)
+        val editNameView = editDialogBinding.findViewById<TextInputEditText>(R.id.editWorldName)
+        val editDescriptionView = editDialogBinding.findViewById<TextInputEditText>(R.id.editWorldDescription)
         val acceptButton = editDialogBinding.findViewById<Button>(R.id.acceptChangesWorldButton)
 
         acceptButton.setOnClickListener {
-
+            val newWorldInfo = WorldInfo(
+                worldInfo.id,
+                editNameView.text.toString(),
+                editDescriptionView.text.toString()
+            )
+            CoroutineScope(Dispatchers.IO).launch {
+                val editSuccess = async{ editWorldUseCase.execute(newWorldInfo) }.await()
+                if (editSuccess) runOnUiThread {
+                    worldsAdapter.deleteWorld(worldInfo)
+                    worldsAdapter.addWorld(newWorldInfo)
+                    Toast.makeText(this@MainActivity, "Мир изменен", Toast.LENGTH_SHORT).show()
+                } else Toast.makeText(this@MainActivity, "Якась ошибка", Toast.LENGTH_SHORT).show()
+                editDialog.dismiss()
+            }
         }
 
-        nameView.setText(worldInfo.name)
-        descriptionView.setText(worldInfo.description)
+        editNameView.setText(worldInfo.name)
+        editDescriptionView.setText(worldInfo.description)
 
         editDialog.show()
     }

@@ -13,10 +13,12 @@ interface WorldsDao {
     @Insert
     suspend fun addWorld(world: WorldEntity)
 
-    @Query("DELETE FROM worlds WHERE Name = :name")
-    suspend fun deleteWorld(name: String)
+    @Query("DELETE FROM worlds WHERE id = :worldId")
+    suspend fun deleteWorld(worldId: Int?)
 
     @Query("SELECT * FROM worlds WHERE name = :worldName")
     suspend fun getWorldByName(worldName: String): WorldEntity
 
+    @Query("UPDATE worlds SET name = :name, description = :description WHERE id = :worldId")
+    suspend fun editWorld(worldId: Int?, name: String, description: String)
 }

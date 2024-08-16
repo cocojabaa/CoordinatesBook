@@ -14,5 +14,5 @@ data class WorldEntity (
     var name: String,
 
     @ColumnInfo(name = "description")
-    var description: String?,
+    var description: String,
 )
