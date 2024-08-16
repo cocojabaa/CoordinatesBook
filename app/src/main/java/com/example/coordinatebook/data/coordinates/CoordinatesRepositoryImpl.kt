@@ -74,5 +74,20 @@ class CoordinatesRepositoryImpl(context: Context): CoordinatesRepository {
         }
     }
 
+    override suspend fun editCoordinates(newCoordinatesInfo: CoordinatesInfo): Boolean {
+        try {
+            db.getCoordinatesDao().editCoordinatesById(
+                newCoordinatesInfo.id,
+                newCoordinatesInfo.description,
+                newCoordinatesInfo.dimension.name,
+                newCoordinatesInfo.x,
+                newCoordinatesInfo.y,
+                newCoordinatesInfo.z
+            )
+            return true
+        } catch (ex: Exception) {
+            return false
+        }
+    }
 
 }

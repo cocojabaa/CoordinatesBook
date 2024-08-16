@@ -7,4 +7,5 @@ interface CoordinatesRepository {
     suspend fun addCoordinates(coordinatesInfo: CoordinatesInfo): Int?
     suspend fun deleteCoordinates(coordinatesId: Int): Boolean
     suspend fun deleteAllCoordinatesByWorldId(worldId: Int): Boolean
+    suspend fun editCoordinates(newCoordinatesInfo: CoordinatesInfo): Boolean
 }

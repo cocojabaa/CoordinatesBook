@@ -21,6 +21,7 @@ import com.example.coordinatebook.domain.models.CoordinatesInfo
 import com.example.coordinatebook.domain.models.Dimensions
 import com.example.coordinatebook.domain.usecases.coordinates.AddCoordinatesUseCase
 import com.example.coordinatebook.domain.usecases.coordinates.DeleteCoordinatesUseCase
+import com.example.coordinatebook.domain.usecases.coordinates.EditCoordinatesUseCase
 import com.example.coordinatebook.domain.usecases.coordinates.GetCoordinatesByIdUseCase
 import com.google.android.material.textfield.TextInputEditText
 import kotlinx.coroutines.CoroutineScope
@@ -42,6 +43,7 @@ class CoordinatesActivity : AppCompatActivity(), CoordinatesClickListener {
     val getCoordinatesByIdUseCase: GetCoordinatesByIdUseCase by lazy { GetCoordinatesByIdUseCase(coordinatesRepository) }
     val addCoordinatesUseCase: AddCoordinatesUseCase by lazy { AddCoordinatesUseCase(coordinatesRepository) }
     val deleteCoordinatesUseCase: DeleteCoordinatesUseCase by lazy { DeleteCoordinatesUseCase(coordinatesRepository) }
+    val editCoordinatesUseCase: EditCoordinatesUseCase by lazy { EditCoordinatesUseCase(coordinatesRepository) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -64,7 +66,7 @@ class CoordinatesActivity : AppCompatActivity(), CoordinatesClickListener {
         if (item.itemId == android.R.id.home) finish()
         return true
     }
-    private fun initRecyclerView(worldId: Int) {
+    fun initRecyclerView(worldId: Int) {
         CoroutineScope(Dispatchers.IO).launch {
             val coordinatesList = async{getCoordinatesByIdUseCase.execute(worldId)}.await()
             adapter = CoordinatesRecyclerAdapter(coordinatesList, this@CoordinatesActivity)
@@ -201,8 +203,6 @@ class CoordinatesActivity : AppCompatActivity(), CoordinatesClickListener {
         val acceptButton = editDialogBinding.findViewById<Button>(R.id.acceptChangesCoordinatesButton)
         val pasteButton = editDialogBinding.findViewById<Button>(R.id.pasteCoordinatesInEdit)
 
-        Log.i("My", "BUTTONS OK")
-
         val editXView = editDialogBinding.findViewById<TextInputEditText>(R.id.editX)
         val editYView = editDialogBinding.findViewById<TextInputEditText>(R.id.editY)
         val editZView = editDialogBinding.findViewById<TextInputEditText>(R.id.editZ)
@@ -215,6 +215,7 @@ class CoordinatesActivity : AppCompatActivity(), CoordinatesClickListener {
         editXView.setText(coordinatesInfo.x.toString())
         if (coordinatesInfo.y != null) editYView.setText(coordinatesInfo.y.toString())
         editZView.setText(coordinatesInfo.z.toString())
+
         when (coordinatesInfo.dimension) {
             Dimensions.UpperWorld -> upperWorldRadio.isChecked = true
             Dimensions.End -> endRadio.isChecked = true
@@ -223,12 +224,33 @@ class CoordinatesActivity : AppCompatActivity(), CoordinatesClickListener {
         editDescriptionView.setText(coordinatesInfo.description)
 
         acceptButton.setOnClickListener {
-
+            var newDimension = Dimensions.UpperWorld
+            if (endRadio.isChecked) newDimension = Dimensions.End
+            if (netherRadio.isChecked) newDimension = Dimensions.Nether
+            val newCoordinatesInfo = CoordinatesInfo(
+                coordinatesInfo.id,
+                coordinatesInfo.worldId,
+                editDescriptionView.text.toString(),
+                newDimension,
+                editXView.text.toString().toInt(),
+                editYView.text.toString().toIntOrNull(),
+                editZView.text.toString().toInt()
+            )
+            CoroutineScope(Dispatchers.IO).launch {
+                val editSuccess = async{ editCoordinatesUseCase.execute(newCoordinatesInfo) }.await()
+                runOnUiThread {
+                    if (editSuccess) {
+                        adapter.deleteCoordinates(coordinatesInfo)
+                        adapter.addCoordinates(newCoordinatesInfo)
+                        Toast.makeText(this@CoordinatesActivity, "Координаты изменены", Toast.LENGTH_SHORT).show()
+                    } else Toast.makeText(this@CoordinatesActivity, "Якась ошибка", Toast.LENGTH_SHORT).show()
+                    editDialog.dismiss()
+                }
+            }
         }
         pasteButton.setOnClickListener {
             pasteCoordinates(editXView, editYView, editZView)
         }
-
         editDialog.show()
     }
 
@@ -260,6 +282,4 @@ class CoordinatesActivity : AppCompatActivity(), CoordinatesClickListener {
             } else Toast.makeText(this, "Неверный формат скопированного текста", Toast.LENGTH_SHORT).show()
         } else Toast.makeText(this, "Нет скопированного текста", Toast.LENGTH_SHORT).show()
     }
-
-
 }
